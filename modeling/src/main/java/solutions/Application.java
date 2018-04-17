@@ -1,6 +1,8 @@
 package solutions;
 
 import solutions.task.*;
+import solutions.task.task6.Task6;
+import solutions.task.task7.Task7;
 
 import java.util.Scanner;
 

@@ -19,43 +19,53 @@ import java.util.Random;
  */
 public class Task5 extends JFrame implements Task {
 
+    private static final double LAMBDA1 = 0.2;
+    private static final double LAMBDA2 = 0.3;
+
     Random random = new Random();
     private static final Integer COUNT = 1000;
 
     @Override
     public Task solve() {
-        List<Boolean> puasson1 = new ArrayList<>();
-        List<Boolean> puasson2 = new ArrayList<>();
-        for(int index = 0; index < COUNT; index++) {
-            puasson1.add(random.nextBoolean());
-            puasson2.add(random.nextBoolean());
-        }
+        List<Double> puasson1 = generatePuassonStream(LAMBDA1);
+        List<Double> puasson2 = generatePuassonStream(LAMBDA2);
 
-        List<Boolean> puasson = new ArrayList<>();
-        for(int index = 0; index < COUNT; index++) {
-            puasson.add(puasson1.get(index) || puasson2.get(index));
-        }
+        List<Double> puasson = mergePuassons(puasson1, puasson2);
+
 
         System.out.println(function(puasson));
 
         return this;
     }
 
-    int function(List<Boolean> puasson) {
-        int maxInterval = 0;
-        int currentInterval = 0;
-        
-        for (Boolean piece : puasson) {
-            if(piece) {
-                if(currentInterval > maxInterval)
-                    maxInterval = currentInterval;
-                currentInterval = 0;
-            } else {
-                currentInterval++;
+    private List<Double> mergePuassons(List<Double> first, List<Double> second) {
+        List<Double> puasson = new ArrayList<>(2001);
+        for (int index = 0; index < COUNT; index++) {
+            puasson.add(first.get(index));
+            puasson.add(second.get(index));
+        }
+        return puasson;
+    }
+
+    private double function(List<Double> puasson) {
+        double maxInterval = 0.0;
+        for(int index = 1; index < puasson.size(); index++) {
+            double currentInterval = puasson.get(index) - puasson.get(index - 1);
+            if(maxInterval < currentInterval) {
+                maxInterval = currentInterval;
             }
         }
         
         return maxInterval;
+    }
+
+    List<Double> generatePuassonStream(Double lambda) {
+        List<Double> result = new ArrayList<>();
+        result.add(0.0);
+        for(int index = 1; index < COUNT; index++) {
+            result.add(result.get(index - 1) + -1d/lambda*Math.log(random.nextDouble()));
+        }
+        return result;
     }
 
     @Override
